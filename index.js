@@ -10,7 +10,9 @@ app.use(express.json());
 mongoose.connect(process.env.MONGO_URI)
 .then(()=> console.log("Connected to MongoDB"))
 .catch(err => console.log("Error:", err));
-
+app.get("/", (req,res)=>{
+    res.json({message:"Yooo whatsup"});
+})
 app.use("/", authRoutes);
 app.use("/users",userRoutes);
 
