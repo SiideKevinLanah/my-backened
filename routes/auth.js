@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");// hashes password not a plain password
 const jwt = require("jsonwebtoken");//let the user stays login
 const User = require("../models/User");
 
-const SECRET = "mysecretkey123";
+const SECRET = process.env.JWT_SECRET;
 
 // REGISTER
 router.post("/register", async (req, res) => {
