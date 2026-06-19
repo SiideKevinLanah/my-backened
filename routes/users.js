@@ -35,7 +35,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // UPDATE
-router.put("/:id", async (req, res) => {
+router.put("/:id", protect,async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(
       req.params.id,
@@ -48,24 +48,26 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-// DELETE
-router.delete("/:id", async (req, res) => {
+// PROFILE — protected
+router.get("/profile", protect, async (req, res) => {
   try {
-    await User.findByIdAndDelete(req.params.id);
+    const user = await User.findById(req.user.id).select("-password");
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// DELETE
+router.delete("/:id", protect,async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.params.id).select("-password");
     res.json({ message: "User deleted!" });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// PROFILE — protected
-router.get("/profile", protect, async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id);
-    res.json(user);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+
 
 module.exports = router;
