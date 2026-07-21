@@ -3,7 +3,7 @@ const protect= require("../middleware/protect.js");
 const router= express.Router();
 const User= require("../models/User.js");
 
-router.post("/team/teamId",protect ,async(req, res)=>{
+router.post("/team/:teamId",protect ,async(req, res)=>{
    
    try{
     const user= await User.findByIdAndUpdate(
@@ -19,7 +19,7 @@ router.post("/team/teamId",protect ,async(req, res)=>{
 });
 
 // Unfollow 
-router.delete("/team/teamId",protect ,async(req, res)=>{
+router.delete("/team/:teamId",protect ,async(req, res)=>{
    
    try{
     const user= await User.findByIdAndUpdate(
@@ -47,7 +47,7 @@ router.get("/", protect, async(req,res)=>{
     }
 });
 
-router.post("/player/playerId", protect, async(req,res)=>{
+router.post("/player/:playerId", protect, async(req,res)=>{
     try{
         const user= await User.findByIdAndUpdate(
             req.user.id,
@@ -61,7 +61,7 @@ router.post("/player/playerId", protect, async(req,res)=>{
     }
 });
 
-router.delete("/player/playerId", protect, async(req, res)=>{
+router.delete("/player/:playerId", protect, async(req, res)=>{
     try{
         const user= await User.findByIdAndUpdate(
             req.user.id,
@@ -75,10 +75,10 @@ router.delete("/player/playerId", protect, async(req, res)=>{
     }
 });
 
-router.post("/league/leagueId",protect, async(req,res)=>{
+router.post("/league/:leagueId",protect, async(req,res)=>{
     try{const user= await User.findByIdAndUpdate(
         req.user.id,
-        {$push:{favoriteLeague:req.params.leagueId}},
+        {$push:{favoriteLeagues:req.params.leagueId}},
         {new:true}
     ).select("-password");
     res.json({message:"League added to favorite:", user});
@@ -89,11 +89,11 @@ router.post("/league/leagueId",protect, async(req,res)=>{
     
 });
 
-router.delete("/league/leagueId",protect, async(req,res)=>{
+router.delete("/league/:leagueId",protect, async(req,res)=>{
     try{
-        const user= await User.findByIdAndDelete(
+        const user= await User.findByIdAndUpdate(
               req.user.id,
-              {$pull:{favoriteLeague:req.params.leagueId}},
+              {$pull:{favoriteLeagues:req.params.leagueId}},
               {new: true}
         ).select("-password");
         res.json({message:"League added to favorite:", user});
@@ -103,4 +103,4 @@ res.status(500).json({error:err.message});
 }
 });
 
-module.export = router;
+module.exports = router;

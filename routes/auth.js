@@ -9,9 +9,9 @@ const SECRET = process.env.JWT_SECRET;
 // REGISTER
 router.post("/register", async (req, res) => {
   try {
-    const { name, email, password, city } = req.body;
+    const { email, password} = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ name, email, password: hashedPassword, city });
+    const user = new User({  email, password: hashedPassword});
     await user.save();
     res.json({ message: "User registered!" });
   } catch (err) {
@@ -23,7 +23,7 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select("+password");
     if (!user) return res.status(404).json({ error: "User not found" });
     const match = await bcrypt.compare(password, user.password);
     if (!match) return res.status(401).json({ error: "Wrong password" });
