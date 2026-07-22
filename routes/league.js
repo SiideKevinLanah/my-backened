@@ -3,14 +3,14 @@ const router = express.Router();
 const protect = require("../middleware/protect");
 const League = require("../models/League");
 const Team = require("../models/Team");
-const match = require("../")
+const Match = require("../models/Match")
 // creating League
 router.post("/", protect, async(req , res)=>{
     try{
         const {name} = req.body;
         const league = new League(
             {name:name,
-            createdbBy:req.user.id});
+            createdBy:req.user.id});
         await league.save();
         res.json({message: "League Created", league});
     }
@@ -18,7 +18,7 @@ router.post("/", protect, async(req , res)=>{
         res.status(500).json({error: err.message});
     }
 });
-
+// GEt the league 
 router.get("/:id", async(req, res)=>{
     try{
   const league = await League.findById(req.params.id);
@@ -29,6 +29,34 @@ router.get("/:id", async(req, res)=>{
     }
   
 });
+
+// Match schedule 
+
+router.post("/:id/matches" , protect , async(req , res)=>{
+    try{
+        const league = await League.findById(req.params.id);
+        if(!league){
+            return res.status(404).json({error:"League not fouund"});
+        }
+        if(league.createdBy.toString()!= req.user.id){
+            return res.status(403).json({error:"Not your league"});
+        }
+        const {homeTeam, awayTeam , date} = req.body;
+        const match = new Match({
+            league = req.params.id,
+            homeTeam,
+            awayTeam,
+            date
+        });
+        await match.save();
+        res.json({message:"Match schedule successfully", match})
+
+    }
+    catch(err){
+        res.status(500).json({error: err.message});
+    }
+})
+
 
 router.put("/matches/:matchId/score", protect, async(req , res)=>{
     try{
