@@ -4,7 +4,7 @@ const SECRET = process.env.JWT_SECRET;
 
 const protect = (req,res,next)=>{
     const authHeader = req.headers.authorization;
-if (!authHeader || !authHeader.startsWith("Bearer "))
+if (!authHeader || !authHeader.startsWith("Bearer"))
   return res.status(401).json({ error: "No token" });
 
 const token = authHeader.split(" ")[1];
@@ -14,7 +14,7 @@ const token = authHeader.split(" ")[1];
         req.user=decoded;
         next();
     }catch(err){
-        res.status(401).json({error:"INvalid token!"});
+        res.status(401).json({error:"Invalid token!"});
     }
 };
 
