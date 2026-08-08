@@ -43,7 +43,7 @@ router.post("/:id/matches" , protect , async(req , res)=>{
         }
         const {homeTeam, awayTeam , date} = req.body;
         const match = new Match({
-            league = req.params.id,
+            league:req.params.id,
             homeTeam,
             awayTeam,
             date
